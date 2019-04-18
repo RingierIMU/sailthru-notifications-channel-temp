@@ -36,14 +36,22 @@ class SailthruChannel
         /** @var SailthruMessage $message */
         $message = $notification->toSailthru($notifiable);
 
+
+        //@TODO: Send vs Multi Send
+        //@TODO: Add evars for multi send option.
+        //@TODO: Add Default Global vars
+        //@TODO: Confirm if ReplyTO actually works
+        //@TODO: Investigate customer_id in config
+        //@TODO: handle errors / exceptions. check SailthruTransport:87
+
+
         $response = $this->sailthru->send(
             $message->getTemplate(),
             $message->getToEmail(),
-            $message->getParameters()
+            $message->getVars()
         );
 
 
-        //@TODO: handle errors / exceptions.
 
 //        if ($response->error) { // replace this by the code need to check for errors
 //            throw CouldNotSendNotification::serviceRespondedWithAnError($response);

@@ -14,7 +14,7 @@ class SailthruMessage
      *
      * @var array
      */
-    protected $parameters;
+    protected $vars;
 
     /**
      * The email address the message should be sent from.
@@ -84,12 +84,12 @@ class SailthruMessage
 
 
     /**
-     * @param array $parameters
+     * @param array $vars
      * @return SailthruMessage
      */
-    public function parameters(array $parameters): SailthruMessage
+    public function vars(array $vars): SailthruMessage
     {
-        $this->parameters = $parameters;
+        $this->vars = $vars;
 
         return $this;
     }
@@ -190,9 +190,9 @@ class SailthruMessage
     /**
      * @return array
      */
-    public function getParameters()
+    public function getVars()
     {
-        return $this->parameters;
+        return $this->vars;
     }
 
     /**
