@@ -1,10 +1,10 @@
 <?php
 
-namespace NotificationChannels\SailthruNotifications;
+namespace NotificationChannels\Sailthru;
 
-use NotificationChannels\SailthruNotifications\Exceptions\CouldNotSendNotification;
-use NotificationChannels\SailthruNotifications\Events\MessageWasSent;
-use NotificationChannels\SailthruNotifications\Events\SendingMessage;
+use NotificationChannels\Sailthru\Exceptions\CouldNotSendNotification;
+use NotificationChannels\Sailthru\Events\MessageWasSent;
+use NotificationChannels\Sailthru\Events\SendingMessage;
 use Illuminate\Notifications\Notification;
 
 class SailthruChannel
@@ -20,7 +20,7 @@ class SailthruChannel
      * @param mixed $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      *
-     * @throws \NotificationChannels\SailthruNotifications\Exceptions\CouldNotSendNotification
+     * @throws \NotificationChannels\Sailthru\Exceptions\CouldNotSendNotification
      */
     public function send($notifiable, Notification $notification)
     {

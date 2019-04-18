@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationChannels\SailthruNotifications\Test;
+namespace NotificationChannels\Sailthru\Test;
 
 class ExampleTest extends \PHPUnit_Framework_TestCase
 {

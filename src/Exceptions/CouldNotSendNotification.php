@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationChannels\SailthruNotifications\Exceptions;
+namespace NotificationChannels\Sailthru\Exceptions;
 
 class CouldNotSendNotification extends \Exception
 {

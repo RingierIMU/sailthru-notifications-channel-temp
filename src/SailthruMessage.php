@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationChannels\SailthruNotifications;
+namespace NotificationChannels\Sailthru;
 
 use Illuminate\Support\Arr;
 
