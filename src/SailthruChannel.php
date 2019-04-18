@@ -2,10 +2,8 @@
 
 namespace NotificationChannels\Sailthru;
 
-use NotificationChannels\Sailthru\Exceptions\CouldNotSendNotification;
-use NotificationChannels\Sailthru\Events\MessageWasSent;
-use NotificationChannels\Sailthru\Events\SendingMessage;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Sailthru\Exceptions\CouldNotSendNotification;
 
 class SailthruChannel
 {
@@ -16,6 +14,7 @@ class SailthruChannel
 
     /**
      * SailthruChannel constructor.
+     *
      * @param \Sailthru_Client $sailthru
      */
     public function __construct(\Sailthru_Client $sailthru)
@@ -36,7 +35,6 @@ class SailthruChannel
         /** @var SailthruMessage $message */
         $message = $notification->toSailthru($notifiable);
 
-
         //@TODO: Send vs Multi Send
         //@TODO: Add evars for multi send option.
         //@TODO: Add Default Global vars
@@ -44,14 +42,11 @@ class SailthruChannel
         //@TODO: Investigate customer_id in config
         //@TODO: handle errors / exceptions. check SailthruTransport:87
 
-
         $response = $this->sailthru->send(
             $message->getTemplate(),
             $message->getToEmail(),
             $message->getVars()
         );
-
-
 
 //        if ($response->error) { // replace this by the code need to check for errors
 //            throw CouldNotSendNotification::serviceRespondedWithAnError($response);
