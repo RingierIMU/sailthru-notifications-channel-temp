@@ -11,24 +11,14 @@ class SailthruServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Bootstrap code here.
-
-        /**
-         * Here's some example code we use for the pusher package.
-
-        $this->app->when(Channel::class)
-            ->needs(Pusher::class)
+        $this->app->when(SailthruChannel::class)
+            ->needs(\Sailthru_Client::class)
             ->give(function () {
-                $pusherConfig = config('broadcasting.connections.pusher');
-
-                return new Pusher(
-                    $pusherConfig['key'],
-                    $pusherConfig['secret'],
-                    $pusherConfig['app_id']
+                return new \Sailthru_Client(
+                    config('services.sailthru.api_key'),
+                    config('services.sailthru.secret')
                 );
             });
-         */
-
     }
 
     /**

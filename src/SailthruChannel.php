@@ -9,9 +9,18 @@ use Illuminate\Notifications\Notification;
 
 class SailthruChannel
 {
-    public function __construct()
+    /**
+     * @var \Sailthru_Client
+     */
+    protected $sailthru;
+
+    /**
+     * SailthruChannel constructor.
+     * @param \Sailthru_Client $sailthru
+     */
+    public function __construct(\Sailthru_Client $sailthru)
     {
-        // Initialisation code here
+        $this->sailthru = $sailthru;
     }
 
     /**
@@ -24,7 +33,17 @@ class SailthruChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        //$response = [a call to the api of your notification send]
+        /** @var SailthruMessage $message */
+        $message = $notification->toSailthru($notifiable);
+
+        $response = $this->sailthru->send(
+            $message->getTemplate(),
+            $message->getToEmail(),
+            $message->getParameters()
+        );
+
+
+        //@TODO: handle errors / exceptions.
 
 //        if ($response->error) { // replace this by the code need to check for errors
 //            throw CouldNotSendNotification::serviceRespondedWithAnError($response);
