@@ -1,5 +1,3 @@
-Use this repo as a skeleton for your new channel, once you're done please submit a Pull Request on [this repo](https://github.com/laravel-notification-channels/new-channels) with all the files.
-
 Here's the latest documentation on Laravel 5.3 Notifications System: 
 
 https://laravel.com/docs/master/notifications
@@ -40,16 +38,75 @@ This is where your description should go. Add a little code example so build can
 
 ## Installation
 
-Please also include the steps for any third-party service setup that's required for this package.
+1. Add your Sailthru API details to `config/services`
+```
+'sailthru' => [
+        'api_key' => '',
+        'secret' => '',
+    ],
+```
+2. `composer require laravel-notification-channels/sailthru-notifications-channel`
+(Specify Repo until official package is added to the notifications channel repo)
+
+2. If required, register the `SailthruServiceProvider`
+
 
 ### Setting up the Sailthru service
 
-Optionally include a few steps how users can set up the service.
+Sign Up on their Website
 
 ## Usage
 
-Some code examples, make it clear how to use the package
+1. Follow standard Notifiable/Notifications Setup for a model. 
+2. If default / global vars are required for all Sailthru calls, add them using the `sailthruDefaultVars` method on your notifiable e.g. 
+```
+    /**
+     * @return array
+     */
+    public function sailthruDefaultVars(): array
+    {
+        return ['global_var_foo' => 'bar'];
 
+    }
+```
+3. Add a `toSailthru` method on your notification, where you define template name and any specific var. 
+
+```
+    /**
+     * @param User $user
+     * @return SailthruMessage
+     */
+    public function toSailthru(User $user)
+    {
+
+        return SailthruMessage::create('reset password')
+            ->toName($user->name)
+            ->toEmail($user->email)
+            ->vars(
+                [
+                    'reset_password_link' => 'https://www.example.com',
+                    'link_expiration_minutes' => config('auth.reminder.expire', 60),
+                    'first_name' => $user->name,
+                ]
+            );
+    }
+```
+
+4. Change the `via()` method in your notification to include the `SailthruChannel`.
+
+```
+    /**
+     * Get the notification's channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array|string
+     */
+    public function via($notifiable)
+    {
+        return [SailthruChannel::class];
+    }
+
+```
 ### Available Message methods
 
 A list of all available options
@@ -74,6 +131,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Credits
 
+- Developed and Maintained by [Ringier Tech & Data](http://ringier.tech) and [Ringier One Africa Media](https://roam.africa)
 - [Dylan Harbour](https://github.com/dylanharbour)
 - [All Contributors](../../contributors)
 
