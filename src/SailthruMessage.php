@@ -18,7 +18,8 @@ class SailthruMessage
 
     /**
      * Multi-send EmailVars
-     * @var array 
+     *
+     * @var array
      */
     protected $eVars = [];
 
@@ -69,6 +70,7 @@ class SailthruMessage
 
     /**
      * SailthruMessage constructor.
+     *
      * @param string $template
      */
     public function __construct(string $template)
@@ -80,6 +82,7 @@ class SailthruMessage
 
     /**
      * @param string $template
+     *
      * @return SailthruMessage
      */
     public static function create(string $template): SailthruMessage
@@ -87,9 +90,9 @@ class SailthruMessage
         return new static($template);
     }
 
-
     /**
      * @param array $vars
+     *
      * @return SailthruMessage
      */
     public function vars(array $vars): SailthruMessage
@@ -101,6 +104,7 @@ class SailthruMessage
 
     /**
      * @param array $eVars
+     *
      * @return SailthruMessage
      */
     public function eVars(array $eVars): SailthruMessage
@@ -112,6 +116,7 @@ class SailthruMessage
 
     /**
      * @param array $defaultVars
+     *
      * @return SailthruMessage
      */
     public function mergeDefaultVars(array $defaultVars): SailthruMessage
@@ -123,6 +128,7 @@ class SailthruMessage
 
     /**
      * @param string $template
+     *
      * @return $this
      */
     public function template(string $template): SailthruMessage
@@ -134,6 +140,7 @@ class SailthruMessage
 
     /**
      * @param string $toName
+     *
      * @return SailthruMessage
      */
     public function toName(string $toName): SailthruMessage
@@ -145,6 +152,7 @@ class SailthruMessage
 
     /**
      * @param string $fromName
+     *
      * @return SailthruMessage
      */
     public function fromName(string $fromName): SailthruMessage
@@ -156,6 +164,7 @@ class SailthruMessage
 
     /**
      * @param string $toEmail
+     *
      * @return SailthruMessage
      */
     public function toEmail(string $toEmail): SailthruMessage
@@ -167,6 +176,7 @@ class SailthruMessage
 
     /**
      * @param string $toEmail
+     *
      * @return SailthruMessage
      */
     public function toEmails(array $toEmails): SailthruMessage
@@ -179,6 +189,7 @@ class SailthruMessage
 
     /**
      * @param string $fromEmail
+     *
      * @return SailthruMessage
      */
     public function fromEmail(string $fromEmail): SailthruMessage
@@ -190,6 +201,7 @@ class SailthruMessage
 
     /**
      * @param string $replyTo
+     *
      * @return SailthruMessage
      */
     public function replyTo(string $replyTo): SailthruMessage
@@ -201,6 +213,7 @@ class SailthruMessage
 
     /**
      * @param array $options
+     *
      * @return SailthruMessage
      */
     public function options(array $options): SailthruMessage
@@ -218,7 +231,6 @@ class SailthruMessage
         return $this->template;
     }
 
-
     /**
      * @return array
      */
@@ -234,7 +246,6 @@ class SailthruMessage
     {
         return $this->eVars;
     }
-
 
     /**
      * @return array
@@ -297,5 +308,4 @@ class SailthruMessage
     {
         return $this->isMultiSend;
     }
-
 }

@@ -2,15 +2,16 @@
 
 namespace NotificationChannels\Sailthru;
 
-use NotificationChannels\Sailthru\Events\MessageWasSent;
-use NotificationChannels\Sailthru\Events\MessageFailedToSend;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Sailthru\Events\MessageFailedToSend;
+use NotificationChannels\Sailthru\Events\MessageWasSent;
 use Sailthru_Client_Exception;
 
 class SailthruChannel
 {
     /**
      * SailthruChannel constructor.
+     *
      * @param \Sailthru_Client $sailthru
      */
     public function __construct(\Sailthru_Client $sailthru)
@@ -18,10 +19,10 @@ class SailthruChannel
         $this->sailthru = $sailthru;
     }
 
-
     /**
      * @param $notifiable
      * @param Notification $notification
+     *
      * @return array
      */
     public function send($notifiable, Notification $notification)
@@ -30,7 +31,6 @@ class SailthruChannel
 
             /** @var SailthruMessage $message */
             $message = $notification->toSailthru($notifiable);
-
 
             if (method_exists($notifiable, 'sailthruDefaultVars')) {
                 $message->mergeDefaultVars($notifiable->sailthruDefaultVars());
@@ -43,16 +43,16 @@ class SailthruChannel
             event(new MessageWasSent($message, $response));
 
             return $response;
-
         } catch (Sailthru_Client_Exception $e) {
-
             event(new MessageFailedToSend($message, $e));
         }
     }
 
     /**
      * @param SailthruMessage $sailthruMessage
+     *
      * @throws Sailthru_Client_Exception
+     *
      * @return array
      */
     protected function multiSend(SailthruMessage $sailthruMessage)
@@ -68,7 +68,9 @@ class SailthruChannel
 
     /**
      * @param SailthruMessage $sailthruMessage
+     *
      * @throws Sailthru_Client_Exception
+     *
      * @return array
      */
     protected function singleSend(SailthruMessage $sailthruMessage)
