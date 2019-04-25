@@ -2,18 +2,13 @@
 
 namespace NotificationChannels\Sailthru;
 
-use NotificationChannels\Sailthru\Exceptions\CouldNotSendNotification;
 use NotificationChannels\Sailthru\Events\MessageWasSent;
-use NotificationChannels\Sailthru\Events\SendingMessage;
+use NotificationChannels\Sailthru\Events\MessageFailedToSend;
 use Illuminate\Notifications\Notification;
+use Sailthru_Client_Exception;
 
 class SailthruChannel
 {
-    /**
-     * @var \Sailthru_Client
-     */
-    protected $sailthru;
-
     /**
      * SailthruChannel constructor.
      * @param \Sailthru_Client $sailthru
@@ -23,38 +18,66 @@ class SailthruChannel
         $this->sailthru = $sailthru;
     }
 
+
     /**
-     * Send the given notification.
-     *
-     * @param mixed $notifiable
-     * @param \Illuminate\Notifications\Notification $notification
-     *
-     * @throws \NotificationChannels\Sailthru\Exceptions\CouldNotSendNotification
+     * @param $notifiable
+     * @param Notification $notification
+     * @return array
      */
     public function send($notifiable, Notification $notification)
     {
-        /** @var SailthruMessage $message */
-        $message = $notification->toSailthru($notifiable);
+        try {
+
+            /** @var SailthruMessage $message */
+            $message = $notification->toSailthru($notifiable);
 
 
-        //@TODO: Send vs Multi Send
-        //@TODO: Add evars for multi send option.
-        //@TODO: Add Default Global vars
-        //@TODO: Confirm if ReplyTO actually works
-        //@TODO: Investigate customer_id in config
-        //@TODO: handle errors / exceptions. check SailthruTransport:87
+            if (method_exists($notifiable, 'sailthruDefaultVars')) {
+                $message->mergeDefaultVars($notifiable->sailthruDefaultVars());
+            }
 
+            $response = $message->isMultiSend()
+                ? $this->multiSend($message)
+                : $this->singleSend($message);
 
-        $response = $this->sailthru->send(
-            $message->getTemplate(),
-            $message->getToEmail(),
-            $message->getVars()
+            event(new MessageWasSent($message, $response));
+
+            return $response;
+
+        } catch (Sailthru_Client_Exception $e) {
+
+            event(new MessageFailedToSend($message, $e));
+        }
+    }
+
+    /**
+     * @param SailthruMessage $sailthruMessage
+     * @throws Sailthru_Client_Exception
+     * @return array
+     */
+    protected function multiSend(SailthruMessage $sailthruMessage)
+    {
+        return $this->sailthru->multisend(
+            $sailthruMessage->getTemplate(),
+            $sailthruMessage->getToEmail(),
+            $sailthruMessage->getVars(),
+            $sailthruMessage->getEVars(),
+            $sailthruMessage->getOptions()
         );
+    }
 
-
-
-//        if ($response->error) { // replace this by the code need to check for errors
-//            throw CouldNotSendNotification::serviceRespondedWithAnError($response);
-//        }
+    /**
+     * @param SailthruMessage $sailthruMessage
+     * @throws Sailthru_Client_Exception
+     * @return array
+     */
+    protected function singleSend(SailthruMessage $sailthruMessage)
+    {
+        return $this->sailthru->send(
+            $sailthruMessage->getTemplate(),
+            $sailthruMessage->getToEmail(),
+            $sailthruMessage->getVars(),
+            $sailthruMessage->getOptions()
+        );
     }
 }

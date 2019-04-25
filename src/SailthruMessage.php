@@ -14,7 +14,13 @@ class SailthruMessage
      *
      * @var array
      */
-    protected $vars;
+    protected $vars = [];
+
+    /**
+     * Multi-send EmailVars
+     * @var array 
+     */
+    protected $eVars = [];
 
     /**
      * The email address the message should be sent from.
@@ -51,13 +57,15 @@ class SailthruMessage
      */
     protected $replyTo;
 
+    /**
+     * @var bool
+     */
+    protected $isMultiSend = false;
 
     /**
-     * The Subject of the Message
-     *
-     * @var string
+     * @var array
      */
-    protected $subject;
+    protected $options = [];
 
     /**
      * SailthruMessage constructor.
@@ -66,11 +74,8 @@ class SailthruMessage
     public function __construct(string $template)
     {
         $this->template = $template;
-
-        //@TODO: This seems to be ignored by Sailthru
         $this->fromEmail = config('mail.from.address');
         $this->fromName = config('mail.from.name');
-        $this->replyTo = $this->fromEmail;
     }
 
     /**
@@ -90,6 +95,28 @@ class SailthruMessage
     public function vars(array $vars): SailthruMessage
     {
         $this->vars = $vars;
+
+        return $this;
+    }
+
+    /**
+     * @param array $eVars
+     * @return SailthruMessage
+     */
+    public function eVars(array $eVars): SailthruMessage
+    {
+        $this->eVars = $eVars;
+
+        return $this;
+    }
+
+    /**
+     * @param array $defaultVars
+     * @return SailthruMessage
+     */
+    public function mergeDefaultVars(array $defaultVars): SailthruMessage
+    {
+        $this->vars = array_merge($defaultVars, $this->getVars());
 
         return $this;
     }
@@ -139,6 +166,18 @@ class SailthruMessage
     }
 
     /**
+     * @param string $toEmail
+     * @return SailthruMessage
+     */
+    public function toEmails(array $toEmails): SailthruMessage
+    {
+        $this->toEmail = implode(',', $toEmails);
+        $this->isMultiSend = true;
+
+        return $this;
+    }
+
+    /**
      * @param string $fromEmail
      * @return SailthruMessage
      */
@@ -161,12 +200,12 @@ class SailthruMessage
     }
 
     /**
-     * @param string $subject
+     * @param array $options
      * @return SailthruMessage
      */
-    public function subject(string $subject): SailthruMessage
+    public function options(array $options): SailthruMessage
     {
-        $this->subject = $subject;
+        $this->options = $options;
 
         return $this;
     }
@@ -179,13 +218,6 @@ class SailthruMessage
         return $this->template;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubject()
-    {
-        return $this->subject;
-    }
 
     /**
      * @return array
@@ -193,6 +225,29 @@ class SailthruMessage
     public function getVars()
     {
         return $this->vars;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEVars()
+    {
+        return $this->eVars;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        $options = $this->options;
+
+        if ($this->replyTo) {
+            $options['replyto'] = $this->replyTo;
+        }
+
+        return $options;
     }
 
     /**
@@ -233,6 +288,14 @@ class SailthruMessage
     public function getReplyTo()
     {
         return $this->replyTo;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultiSend(): bool
+    {
+        return $this->isMultiSend;
     }
 
 }
